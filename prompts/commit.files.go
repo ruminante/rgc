@@ -17,8 +17,14 @@ func getPaths(bts []byte) []string {
 	rmv_nl := strings.Replace(string(bts), "\n", "", -1)
 	rmv_intr := strings.Replace(string(rmv_nl), "??", "", -1)
 	rmv_m := strings.Replace(string(rmv_intr), "M", "", -1)
-	paths := strings.Split(string(rmv_m), " ")
+	rmv_d := strings.Replace(string(rmv_m), "D", "", -1)
+	paths := strings.Split(string(rmv_d), " ")
 	paths[0] = "."
+	for i, path := range paths {
+		if path == "" {
+			paths = append(paths[:i], paths[i+1:]...)
+		}
+	}
 	paths = append(paths, "Done")
 	return paths
 }
