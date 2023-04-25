@@ -24,10 +24,10 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.PersistentFlags().BoolVarP(&add, "all", "a", false, "Select all files for git add")
-	rootCmd.PersistentFlags().StringVarP(&m, "message", "m", "", "Commit message for the commit")
-  rootCmd.PersistentFlags().BoolVarP(&log, "logs", "l", false, "Logs all commits in the repository")
-	rootCmd.PersistentFlags().BoolVar(&undo, "undo", false, "Select all files for git add")
+	rootCmd.PersistentFlags().BoolVarP(&add, "all", "a", false, "Select all files for git add (Using this flag will skip the file selection prompt)")
+	rootCmd.PersistentFlags().StringVarP(&m, "message", "m", "", "Commit message (Using this flag will skip the commit message prompt)")
+  rootCmd.PersistentFlags().BoolVarP(&log, "logs", "l", false, "Show logs for all commits in the repository")
+	rootCmd.PersistentFlags().BoolVar(&undo, "undo", false, "Undo the last commit")
 }
 
 func Execute() {
