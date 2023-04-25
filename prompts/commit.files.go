@@ -1,8 +1,10 @@
 package prompts
 
 import (
+	"bytes"
 	"fmt"
 	"os/exec"
+	"regexp"
 	"strings"
 
 	"github.com/manifoldco/promptui"
@@ -14,18 +16,16 @@ type commit_files struct {
 }
 
 func getPaths(bts []byte) []string {
-	rmv_nl := strings.Replace(string(bts), "\n", "", -1)
-	rmv_intr := strings.Replace(string(rmv_nl), "??", "", -1)
-	rmv_m := strings.Replace(string(rmv_intr), "M", "", -1)
-	rmv_d := strings.Replace(string(rmv_m), "D", "", -1)
-	paths := strings.Split(string(rmv_d), " ")
-	paths[0] = "."
-	for i, path := range paths {
-		if path == "" {
-			paths = append(paths[:i], paths[i+1:]...)
-		}
+	re := regexp.MustCompile("[\n??MD]")
+	bts = re.ReplaceAll(bts, []byte(""))
+	paths := make([]string, 0, bytes.Count(bts, []byte(" "))+2)
+	fields := bytes.Fields(bts)
+
+	for _, field := range fields {
+		paths = append(paths, string(field))
 	}
-	paths = append(paths, "Done")
+
+	paths = append(paths, "all files", "finish")
 	return paths
 }
 
@@ -78,15 +78,20 @@ func SelectItems(selectedPos int, allItems []*commit_files) ([]*commit_files, er
 	}
 	
 	chosenItem := allItems[selectionIdx]
+
+	if chosenItem.Path == "all files" {
+		for i := range allItems {
+			if allItems[i].Path != "finish" {
+				allItems[i].IsSelected = true
+			}
+		}
+	}
 	
-	if chosenItem.Path != "Done" && chosenItem.Path != "." {
+	if chosenItem.Path != "finish" {
 			chosenItem.IsSelected = !chosenItem.IsSelected
 			return SelectItems(selectionIdx, allItems)
 	}
 
-	if chosenItem.Path == "." {
-		chosenItem.IsSelected = true
-	}
 	
 	var selectedItems []*commit_files
 	for _, i := range allItems {
