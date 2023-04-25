@@ -9,6 +9,7 @@ import (
 )
 
 var undo bool
+var log bool
 var add bool
 var m string
 
@@ -25,6 +26,7 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&add, "all", "a", false, "Select all files for git add")
 	rootCmd.PersistentFlags().StringVarP(&m, "message", "m", "", "Commit message for the commit")
+  rootCmd.PersistentFlags().BoolVarP(&log, "logs", "l", false, "Logs all commits in the repository")
 	rootCmd.PersistentFlags().BoolVar(&undo, "undo", false, "Select all files for git add")
 }
 
